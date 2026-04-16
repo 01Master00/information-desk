@@ -9,6 +9,6 @@ body,
 }
 
 body {
-  overflow: hidden;
+  overflow-x: hidden;
   font-family: "Segoe UI", "Trebuchet MS", "Arial Narrow", Arial, sans-serif;
 }

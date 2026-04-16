@@ -57,10 +57,10 @@ function App() {
   };
 
   return (
-    <main className="relative h-screen w-screen overflow-hidden bg-[radial-gradient(circle_at_top,_#1e293b_0%,_#0f172a_42%,_#020617_100%)]">
+    <main className="relative h-screen w-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,_#1e293b_0%,_#0f172a_42%,_#020617_100%)]">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(148,163,184,0.08)_0%,rgba(2,6,23,0)_55%,rgba(15,23,42,0.24)_100%)]" />
       <div className="relative flex h-full items-center justify-center p-4 md:p-6">
-        <section className="relative h-[min(94vh,980px)] w-[min(96vw,1520px)] overflow-hidden rounded-[2rem] border border-slate-700/70 bg-slate-950/80 shadow-[0_30px_120px_rgba(15,23,42,0.7)]">
+        <section className="relative flex h-[min(94vh,980px)] w-full max-w-[1520px] flex-col overflow-x-hidden rounded-[2rem] border border-slate-700/70 bg-slate-950/80 shadow-[0_30px_120px_rgba(15,23,42,0.7)]">
           <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-slate-700/80 bg-slate-950/80 px-4 py-3 text-[11px] uppercase tracking-[0.35em] text-slate-300 md:px-6">
             <span>Petrik Lajos - információs pult</span>
             <span className="hidden text-sky-300 md:inline">
@@ -68,31 +68,33 @@ function App() {
             </span>
           </div>
 
-          <div className="flex h-full w-full">
-            <Canvas
-              className="h-full w-full"
-              camera={{ position: [0, 0, 34], fov: 20, near: 0.1, far: 120 }}
-            >
-              <color attach="background" args={["#0f172a"]} />
-              <fog attach="fog" args={["#0f172a", 30, 80]} />
-              <ambientLight intensity={1.45} />
-              <directionalLight position={[8, 12, 14]} intensity={1.25} />
-              <directionalLight position={[-10, -4, 12]} intensity={0.5} />
-              <pointLight
-                position={[0, 0, 28]}
-                intensity={1.8}
-                color="#93c5fd"
-              />
+          <div className="flex h-full w-full flex-col xl:flex-row">
+            <div className="min-h-[56vh] w-full min-w-0 flex-1 xl:min-h-0">
+              <Canvas
+                className="h-full w-full"
+                camera={{ position: [0, 0, 34], fov: 20, near: 0.1, far: 120 }}
+              >
+                <color attach="background" args={["#0f172a"]} />
+                <fog attach="fog" args={["#0f172a", 30, 80]} />
+                <ambientLight intensity={1.45} />
+                <directionalLight position={[8, 12, 14]} intensity={1.25} />
+                <directionalLight position={[-10, -4, 12]} intensity={0.5} />
+                <pointLight
+                  position={[0, 0, 28]}
+                  intensity={1.8}
+                  color="#93c5fd"
+                />
 
-              <RoomGroups
-                getOpacity={getOpacity}
-                onHoverStart={showTooltip}
-                onHoverMove={moveTooltip}
-                onHoverEnd={hideTooltip}
-              />
-            </Canvas>
-            <div className="flex flex-col h-full w-full max-w-96 text-white mt-20 p-5">
-              <div className="rounded-2xl border border-slate-700/70 bg-slate-900/45 p-4 backdrop-blur-sm">
+                <RoomGroups
+                  getOpacity={getOpacity}
+                  onHoverStart={showTooltip}
+                  onHoverMove={moveTooltip}
+                  onHoverEnd={hideTooltip}
+                />
+              </Canvas>
+            </div>
+            <div className="flex h-full w-full flex-col items-stretch gap-6 p-4 text-white xl:w-[24rem] xl:flex-none md:items-center xl:p-5 2xl:w-[28rem]">
+              <div className="w-full rounded-2xl border border-slate-700/70 bg-slate-900/45 xl:mt-10 p-4 backdrop-blur-sm md:max-w-[28rem]">
                 <div className="mb-3 flex items-center justify-between">
                   <p className="text-xs uppercase tracking-[0.2em] text-slate-300">
                     Keresés
@@ -120,7 +122,7 @@ function App() {
                   </label>
                 </div>
               </div>
-              <div className="mt-6 rounded-2xl border border-slate-700/70 bg-slate-900/45 p-4 backdrop-blur-sm">
+              <div className="w-full rounded-2xl border border-slate-700/70 bg-slate-900/45 p-4 backdrop-blur-sm md:max-w-[28rem]">
                 <div className="mb-3 flex items-center justify-between">
                   <p className="text-xs uppercase tracking-[0.2em] text-slate-300">
                     Kategória
@@ -166,11 +168,11 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between px-4 py-4 text-xs text-slate-300 md:px-6">
-            <div className="rounded-full border border-slate-600/70 bg-slate-950/70 px-3 py-1.5 backdrop-blur-sm">
+          <div className="pointer-events-none z-10 mt-[5px] flex flex-col items-stretch gap-2 px-4 py-4 text-xs text-slate-300 md:flex-row md:items-end md:justify-between md:px-6">
+            <div className="w-full rounded-full border border-slate-600/70 bg-slate-950/70 px-3 py-1.5 text-center backdrop-blur-sm md:w-auto md:text-left hidden md:block">
               Szűrők használatával jobban látható a terem amit keresel!
             </div>
-            <div className="rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-sky-200 backdrop-blur-sm">
+            <div className="w-full rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-center text-sky-200 backdrop-blur-sm md:w-auto md:text-left">
               Készítette: Kovács Zsombor
             </div>
           </div>
