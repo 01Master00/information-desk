@@ -53,8 +53,14 @@ jobs:
             $global:LASTEXITCODE = 0
           }
           finally {
-            $endState = (Get-WebAppPoolState -Name $appPoolName).Value
-            if ($endState -ne "Started") {
-              Start-WebAppPool -Name $appPoolName
+            # Adunk egy kis időt az IIS-nek, hogy magához térjen a másolás után
+            Start-Sleep -s 5
+            try {
+              $endState = (Get-WebAppPoolState -Name $appPoolName).Value
+              if ($endState -ne "Started") {
+                Start-WebAppPool -Name $appPoolName
+              }
+            } catch {
+              Write-Host "Figyelem: Nem sikerült automatikusan elindítani az App Pool-t, de a másolás kész."
             }
           }
