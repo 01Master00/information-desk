@@ -16,7 +16,7 @@ jobs:
           node-version: "22.18.0"
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run Lint
         run: npm run lint
@@ -28,17 +28,28 @@ jobs:
         shell: powershell
         run: |
           Import-Module WebAdministration
+          $appPoolName = "Petrik1"
+          $sourcePath = Join-Path $PWD "dist"
+          $destinationPath = "C:\Users\Administrator\Desktop\PETRIK1\dist"
 
-          # 1. Leállítás hibaellenőrzés nélkül
-          # Az "-ErrorAction SilentlyContinue" megakadályozza a script leállását, ha a pool már áll
-          Stop-WebAppPool -Name "Petrik1" -ErrorAction SilentlyContinue
+          try {
+            $poolState = (Get-WebAppPoolState -Name $appPoolName).Value
+            if ($poolState -eq "Started") {
+              Stop-WebAppPool -Name $appPoolName
+            }
 
-          # 2. Várakozás a fájlok felszabadítására
-          Start-Sleep -s 3
+            if (-not (Test-Path -Path $destinationPath)) {
+              New-Item -ItemType Directory -Path $destinationPath -Force | Out-Null
+            }
 
-          # 3. MÁSOLÁS - Itt a ./dist/* a lényeg!
-          # Használjuk a teljes elérési utat a biztonság kedvéért
-          Copy-Item -Path "C:\Users\Administrator\Desktop\PETRIK1\_work\information-desk\information-desk\dist\*" -Destination "C:\Users\Administrator\Desktop\PETRIK1\dist" -Recurse -Force
-
-          # 4. Újraindítás
-          Start-WebAppPool -Name "Petrik1"
+            robocopy $sourcePath $destinationPath /MIR /R:2 /W:2 /NFL /NDL /NP
+            if ($LASTEXITCODE -gt 7) {
+              throw "Robocopy failed with exit code $LASTEXITCODE"
+            }
+          }
+          finally {
+            $endState = (Get-WebAppPoolState -Name $appPoolName).Value
+            if ($endState -ne "Started") {
+              Start-WebAppPool -Name $appPoolName
+            }
+          }
