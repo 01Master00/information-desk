@@ -31,7 +31,7 @@ jobs:
           Stop-WebAppPool -Name "Petrik1"
 
           # Copy files to the IIS physical path
-          Copy-Item -Path "./publish/*" -Destination "C:\Desktop\Petrik1\dist" -Recurse -Force
+          Copy-Item -Path "./publish/*" -Destination "C:\Users\Administrator\Desktop\Petrik1\dist" -Recurse -Force
 
           # Restart the App Pool
           Start-WebAppPool -Name "Petrik1"
