@@ -25,13 +25,19 @@ jobs:
         run: npm run build
 
       - name: Deploy to IIS
+        shell: powershell
         run: |
-          # Stop the App Pool to prevent file-lock errors
           Import-Module WebAdministration
-          Stop-WebAppPool -Name "Petrik1"
 
-          # Copy files to the IIS physical path
-          Copy-Item -Path "./publish/*" -Destination "C:\Users\Administrator\Desktop\Petrik1\dist" -Recurse -Force
+          # 1. App Pool leállítása
+          Stop-WebAppPool -Name "Petrik1" -ErrorAction SilentlyContinue
 
-          # Restart the App Pool
+          # 2. Várjunk egy kicsit a fájlzárolások miatt
+          Start-Sleep -s 2
+
+          # 3. MÁSOLÁS - Itt a ./dist/* a lényeg!
+          # A -Force felülírja a régi fájlokat
+          Copy-Item -Path "./dist/*" -Destination "C:\Users\Administrator\Desktop\Petrik1\dist" -Recurse -Force
+
+          # 4. App Pool újraindítása
           Start-WebAppPool -Name "Petrik1"
