@@ -1,4 +1,5 @@
 import Room from "./Room";
+import { useState } from "react";
 
 type RoomGroupProps = {
   getOpacity: (
@@ -24,6 +25,7 @@ type FloorGroupDefinition = {
   position: [number, number, number];
   scale: number;
   rooms: RoomDefinition[];
+  floor: number;
 };
 
 const aFloorRooms: RoomDefinition[] = [
@@ -31,7 +33,7 @@ const aFloorRooms: RoomDefinition[] = [
     position: [0, 0, -0.2],
     size: [18, 12, 0.12],
     color: "rgb(248, 250, 252)",
-    opacity: 0.2,
+    opacity: 0.5,
     label: "A emelet - Alap",
   },
   {
@@ -90,7 +92,7 @@ const bFloorRooms: RoomDefinition[] = [
     position: [0, 0, -0.2],
     size: [18, 12, 0.12],
     color: "rgb(248, 250, 252)",
-    opacity: 0.2,
+    opacity: 0.5,
     label: "B emelet - Alap",
   },
   {
@@ -145,9 +147,9 @@ const bFloorRooms: RoomDefinition[] = [
 ];
 
 const floorGroups: FloorGroupDefinition[] = [
-  { position: [0, 1, 3], scale: 0.5, rooms: aFloorRooms },
-  { position: [0, 1, 0], scale: 0.5, rooms: aFloorRooms },
-  { position: [0, 0, -3], scale: 0.5, rooms: bFloorRooms },
+  { position: [0, 1, 3], scale: 0.5, rooms: aFloorRooms, floor: 1 },
+  { position: [0, 1, 0], scale: 0.5, rooms: aFloorRooms, floor: 2 },
+  { position: [0, 0, -3], scale: 0.5, rooms: bFloorRooms, floor: 3 },
 ];
 
 function RoomGroups({
@@ -156,31 +158,42 @@ function RoomGroups({
   onHoverMove,
   onHoverEnd,
 }: RoomGroupProps) {
+  const [filter, setFilter] = useState<number | null>(null);
+
   return (
     <group position={[0, 0, 0]} rotation={[-1.2, 0, 0.2]}>
-      {floorGroups.map((floor, floorIndex) => (
-        <group key={floorIndex} position={floor.position} scale={floor.scale}>
-          {floor.rooms.map((room) => {
-            const opacity = room.category
-              ? getOpacity(room.label, room.category, room.opacity ?? 1)
-              : (room.opacity ?? 1);
+      {floorGroups
+        .filter((e) => (filter != null ? e.floor == filter : e))
+        .map((floor, floorIndex) => (
+          <group
+            key={floorIndex}
+            position={filter != null ? [0, 1, 0] : floor.position}
+            scale={floor.scale}
+            onClick={() =>
+              filter == null ? setFilter(floor.floor) : setFilter(null)
+            }
+          >
+            {floor.rooms.map((room) => {
+              const opacity = room.category
+                ? getOpacity(room.label, room.category, room.opacity ?? 1)
+                : (room.opacity ?? 1);
 
-            return (
-              <Room
-                key={`${room.label}-${room.position.join("-")}`}
-                position={room.position}
-                size={room.size}
-                color={room.color}
-                opacity={opacity}
-                label={room.label}
-                onHoverStart={onHoverStart}
-                onHoverMove={onHoverMove}
-                onHoverEnd={onHoverEnd}
-              />
-            );
-          })}
-        </group>
-      ))}
+              return (
+                <Room
+                  key={`${room.label}-${room.position.join("-")}`}
+                  position={room.position}
+                  size={room.size}
+                  color={room.color}
+                  opacity={opacity}
+                  label={room.label}
+                  onHoverStart={onHoverStart}
+                  onHoverMove={onHoverMove}
+                  onHoverEnd={onHoverEnd}
+                />
+              );
+            })}
+          </group>
+        ))}
     </group>
   );
 }
