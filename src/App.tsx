@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useState } from "react";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { useState, useRef } from "react";
 import RoomGroups from "./components/RoomGroups";
 import Tooltip from "./components/Tooltip";
 
@@ -14,6 +15,7 @@ type HoverState = {
 function App() {
   const [filter, setFilter] = useState("");
   const [category, setCategory] = useState("");
+  const orbitRef = useRef<OrbitControlsImpl | null>(null);
 
   const [hover, setHover] = useState<HoverState>({
     visible: false,
@@ -97,6 +99,7 @@ function App() {
                   enableRotate
                   minDistance={14}
                   maxDistance={60}
+                  ref={orbitRef}
                 />
               </Canvas>
             </div>
@@ -183,6 +186,12 @@ function App() {
             <div className="w-full rounded-lg border border-green-300/50 bg-green-50 px-4 py-3 text-center text-gray-600 backdrop-blur-sm md:w-auto md:text-left hidden md:block">
               Szűrők használatával jobban látható a terem amit keresel!
             </div>
+            <button
+              className="pointer-events-auto cursor-pointer w-full rounded-lg border border-green-300/50 bg-green-50 px-4 py-3 text-center text-gray-600 font-semibold backdrop-blur-sm md:w-auto md:text-left hidden md:block"
+              onClick={() => orbitRef.current?.reset()}
+            >
+              Kamera szög alaphelyeztbe állítása
+            </button>
             <div className="w-full rounded-lg border border-green-700/60 bg-green-50 px-4 py-3 text-center text-green-700 backdrop-blur-sm md:w-auto md:text-left font-medium">
               Készítette: Kovács Zsombor
             </div>
