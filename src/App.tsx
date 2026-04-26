@@ -216,7 +216,7 @@ function App() {
                       Válassz egy emeletet!
                     </p>
                     <p className="mt-1.5 text-sm text-slate-500">
-                      Kattints a térkepre!.
+                      Kattints a térképre!
                     </p>
                   </div>
                 ) : (
@@ -224,7 +224,7 @@ function App() {
                     {selectedRoom ? (
                       <div className="mb-4 w-full rounded-lg border border-green-200/60 bg-green-50 p-4 text-sm text-gray-700 shadow-sm backdrop-blur-sm sm:p-5">
                         <p className="mb-3 text-sm font-semibold tracking-wide text-gray-600 uppercase">
-                          Kivalasztott terem
+                          Kiválasztott terem
                         </p>
                         <p>
                           <span className="font-medium text-gray-600">
@@ -245,10 +245,10 @@ function App() {
                       </div>
                     ) : null}
                     <p className="text-center text-sm md:text-left">
-                      Kattints rá egy szintre ha ki szeretnéd jelölni!
+                      Kattints rá egy szintre, ha ki szeretnéd jelölni!
                     </p>
                     <p className="mt-1 text-center text-xs text-slate-500 md:text-left">
-                      Aktualis szint: {getFloorLabel(zoomFilter)}
+                      Aktuális szint: {getFloorLabel(zoomFilter)}
                     </p>
                     <div className="mt-3 max-h-[min(38vh,22rem)] space-y-2 overflow-y-auto pr-1">
                       {selectedFloorRooms.map((room) => (
@@ -282,10 +282,10 @@ function App() {
               className="pointer-events-auto cursor-pointer w-full rounded-lg border border-green-300/50 bg-green-50 px-4 py-3 text-center text-gray-600 font-semibold backdrop-blur-sm md:w-auto md:text-left"
               onClick={resetCamera}
             >
-              Kamera szög alaphelyeztbe állítása
+              Kamera szög alaphelyzetbe állítása
             </button>
             <div className="w-full rounded-lg border border-green-300/50 bg-green-50 px-4 py-3 text-center text-gray-600 backdrop-blur-sm md:w-auto md:text-left">
-              Szűrők használatával jobban látható a terem amit keresel!
+              Szűrők használatával jobban látható a terem, amit keresel!
             </div>
           </div>
         </section>
