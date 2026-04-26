@@ -11,12 +11,38 @@ import {
   isCorridorLabel,
   type RoomDefinition,
 } from "./components/roomData";
+import KioskBoard from "kioskboard";
 
 type SelectedRoomData = RoomDefinition & { floor: number };
+
+const kioskboardOptions = {
+  // KioskBoard typings require this property; runtime uses keysJsonUrl when set to null.
+  keysArrayOfObjects: null as unknown as { [index: string]: string }[],
+  keysJsonUrl: "/kioskboard-keys-hungarian.json",
+  language: "hu",
+  theme: "material" as const,
+  autoScroll: true,
+  capsLockActive: false,
+  allowRealKeyboard: true,
+  allowMobileKeyboard: true,
+  cssAnimations: true,
+  cssAnimationsDuration: 360,
+  cssAnimationsStyle: "slide" as const,
+  keysAllowSpacebar: true,
+  keysSpacebarText: "Space",
+  keysFontFamily: "sans-serif",
+  keysFontSize: "22px",
+  keysFontWeight: "normal",
+  keysIconSize: "25px",
+  keysEnterText: "Enter",
+  keysEnterCallback: undefined,
+  keysEnterCanClose: true,
+};
 
 function App() {
   const [filter, setFilter] = useState("");
   const [category, setCategory] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [zoomFilter, setZoomFilter] = useState<number | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<SelectedRoomData | null>(
     null,
@@ -25,6 +51,7 @@ function App() {
   const idleResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const clearIdleResetTimer = () => {
     if (idleResetTimeoutRef.current) {
@@ -52,7 +79,36 @@ function App() {
   };
 
   useEffect(() => {
+    const inputEl = inputRef.current;
+
+    if (!inputEl) {
+      return;
+    }
+
+    const syncFilterFromInput = () => {
+      setFilter(inputEl.value);
+    };
+
+    const handleFocus = () => {
+      setIsSearchFocused(true);
+    };
+
+    const handleBlur = () => {
+      setIsSearchFocused(false);
+    };
+
+    inputEl.addEventListener("change", syncFilterFromInput);
+    inputEl.addEventListener("input", syncFilterFromInput);
+    inputEl.addEventListener("focus", handleFocus);
+    inputEl.addEventListener("focusout", handleBlur);
+
+    KioskBoard.run(inputEl, kioskboardOptions);
+
     return () => {
+      inputEl.removeEventListener("change", syncFilterFromInput);
+      inputEl.removeEventListener("input", syncFilterFromInput);
+      inputEl.removeEventListener("focus", handleFocus);
+      inputEl.removeEventListener("focusout", handleBlur);
       clearIdleResetTimer();
     };
   }, []);
@@ -151,12 +207,15 @@ function App() {
                 <div className="relative">
                   <input
                     type="text"
+                    ref={inputRef}
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
                     className="peer h-11 w-full rounded-lg border border-green-300/60 bg-transparent pl-5 pr-4 text-gray-900 transition-all duration-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-transparent"
                   />
                   <label
-                    className={`absolute ${filter ? "-top-2.5 text-green-600 text-xs font-medium" : "top-2.5"} left-5 z-20 bg-green-50 px-1 text-gray-600 transition-all duration-300 pointer-events-none peer-focus:-top-2.5 peer-focus:text-xs peer-focus:font-medium peer-focus:text-green-600`}
+                    className={`absolute ${filter || isSearchFocused ? "-top-2.5 text-green-600 text-xs font-medium" : "top-2.5"} left-5 z-20 bg-green-50 px-1 text-gray-600 transition-all duration-300 pointer-events-none peer-focus:-top-2.5 peer-focus:text-xs peer-focus:font-medium peer-focus:text-green-600`}
                   >
                     Keress egy teremre
                   </label>
